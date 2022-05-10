@@ -20,23 +20,23 @@ const gameOptions = {
 const againOptions = {
     reply_markup: JSON.stringify({
         inline_keyboard: [
-            [{text: 'Начать заново', callback_data: '/again'}]
+            [{text: 'Start again', callback_data: '/again'}]
         ]
     })
 }
 
 const startGame = async (chatId) => {
-    await bot.sendMessage(chatId, 'Давай сыграем: я загадываю число от 0 до 9, и ты должен его угадать!');
+    await bot.sendMessage(chatId, "Let's play a game: I'll guess a number from 0 to 9 and you need to guess it! ");
     const randomNumber = Math.floor(Math.random() * 10);
     chats[chatId] = randomNumber;
-    await bot.sendMessage(chatId, 'Угадывай! :)', gameOptions)
+    await bot.sendMessage(chatId, 'Guess! :)', gameOptions)
 }
 
 const start = () => {
     bot.setMyCommands([
-        {command: '/start', description: 'Приветствие'},
-        {command: '/info', description: 'Ваша информация'},
-        {command: '/game', description: 'Игра'}
+        {command: '/start', description: 'Welcome'},
+        {command: '/info', description: 'Your info'},
+        {command: '/game', description: 'Game'}
     ])
     
     bot.on('message', async msg  => {
@@ -48,12 +48,12 @@ const start = () => {
             return bot.sendMessage(chatId, `Hello`)
         }
         if (text === '/info') {
-            return bot.sendMessage(chatId, `Тебя зовут ${msg.from.first_name} ${msg.from.last_name}`)
+            return bot.sendMessage(chatId, `Your name is ${msg.from.first_name}`)
         }
         if (text ==='/game') {
            return startGame(chatId);
         }
-        return bot.sendMessage(chatId, 'Не понимаю, что ты от меня хочешь :/')
+        return bot.sendMessage(chatId, "I don't understand this command :/")
     })
 
     bot.on('callback_query', async msg => {
@@ -63,9 +63,9 @@ const start = () => {
             return startGame(chatId);
         }
         if(data == chats[chatId]) { 
-            return bot.sendMessage(chatId, `Поздравляю, ты угадал цифру ${chats[chatId]}`, againOptions)
+            return bot.sendMessage(chatId, `Congratulations! You have guessed a number ${chats[chatId]}`, againOptions)
         } else {
-            return bot.sendMessage(chatId, `К сожалению, ты не угадал, бот выбрал цифру ${chats[chatId]}, а ты цифру ${data}`, againOptions)
+            return bot.sendMessage(chatId, `I'm sorry you didn't guess right. The correct number is ${chats[chatId]}, and you picked ${data}`, againOptions)
         }
     })
 }
